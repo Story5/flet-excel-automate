@@ -34,6 +34,12 @@ def main(page: ft.Page):
     new_task = ft.TextField(hint_text="Whats needs to be done?", width=300)
     page.add(
         ft.Row([new_task, ft.ElevatedButton("Add", on_click=add_clicked)]))
+    
+    first_name = ft.TextField()
+    last_name = ft.TextField()
+    first_name.visible = False
+    last_name.disabled = True
+    page.add(first_name, last_name)
 
 
 ft.app(target=main)
