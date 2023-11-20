@@ -2,25 +2,16 @@ import flet as ft
 
 
 def main(page: ft.Page):
-    first_name = ft.Ref[ft.TextField]()
-    last_name = ft.Ref[ft.TextField]()
-    greetings = ft.Ref[ft.Column]()
-
-    def btn_click(e):
-        greetings.current.controls.append(
+    def on_keyboard(e: ft.KeyboardEvent):
+        page.add(
             ft.Text(
-                f"Hello, {first_name.current.value} {last_name.current.value}!")
+                f"Key: {e.key}, Shift: {e.shift}, Control: {e.ctrl}, Alt: {e.alt}, Meta: {e.meta}"
+            )
         )
-        first_name.current.value = ""
-        last_name.current.value = ""
-        page.update()
-        first_name.current.focus()
 
+    page.on_keyboard_event = on_keyboard
     page.add(
-        ft.TextField(ref=first_name, label="First name", autofocus=True),
-        ft.TextField(ref=last_name, label="Last name"),
-        ft.ElevatedButton("Say hello!", on_click=btn_click),
-        ft.Column(ref=greetings),
+        ft.Text("Press any key with a combination of CTRL, ALT, SHIFT and META keys...")
     )
 
 
