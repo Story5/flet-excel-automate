@@ -14,11 +14,15 @@ def main(page: ft.Page):
             ft.Text("C"),
         ]
     ))
+    page.add(
+        ft.Row(controls=[
+            ft.TextField(label="Your name")
+        ])
+    )
     for i in range(10):
         t.value = f"Step {i}"
         page.update()
         time.sleep(1)
-    
 
 
 ft.app(target=main)
