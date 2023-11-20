@@ -1,28 +1,37 @@
 import flet as ft
+import time
+import threading
+
+
+class Countdown(ft.UserControl):
+    def __init__(self, seconds):
+        super().__init__()
+        self.seconds = seconds
+
+    def did_mount(self):
+        self.running = True
+        self.th = threading.Thread(
+            target=self.update_timer, args=(), daemon=True)
+        self.th.start()
+
+    def will_unmount(self):
+        self.running = False
+
+    def update_timer(self):
+        while self.seconds and self.running:
+            mins, secs = divmod(self.seconds, 60)
+            self.countdown.value = "{:02d}:{:02d}".format(mins, secs)
+            self.update()
+            time.sleep(1)
+            self.seconds -= 1
+
+    def build(self):
+        self.countdown = ft.Text()
+        return self.countdown
 
 
 def main(page: ft.Page):
-    page.title = "Flet Chat"
-
-    # subscribe to broadcast messages
-    def on_message(msg):
-        messages.controls.append(ft.Text(msg))
-        page.update()
-
-    page.pubsub.subscribe(on_message)
-
-    def send_click(e):
-        page.pubsub.send_all(f"{user.value}: {message.value}")
-        # clean up the form
-        message.value = ""
-        page.update()
-
-    messages = ft.Column()
-    user = ft.TextField(hint_text="Your name", width=150)
-    message = ft.TextField(hint_text="Your message...",
-                           expand=True)  # fill all the space
-    send = ft.ElevatedButton("Send", on_click=send_click)
-    page.add(messages, ft.Row(controls=[user, message, send]))
+    page.add(Countdown(120), Countdown(60))
 
 
-ft.app(target=main, view=ft.AppView.WEB_BROWSER)
+ft.app(target=main)
