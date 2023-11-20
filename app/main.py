@@ -1,24 +1,48 @@
-import os
 import flet as ft
-
-os.environ["FLET_WS_MAX_MESSAGE_SIZE"] = "8000000"
 
 
 def main(page: ft.Page):
-    gv = ft.GridView(expand=True, max_extent=150, child_aspect_ratio=1)
-    page.add(gv)
+    page.title = "Drag and Drop example"
 
-    for i in range(5000):
-        gv.controls.append(
-            ft.Container(
-                ft.Text(f"Item {i}"),
-                alignment=ft.alignment.center,
-                bgcolor=ft.colors.AMBER_100,
-                border=ft.border.all(1, ft.colors.AMBER_400),
-                border_radius=ft.border_radius.all(5),
-            )
+    def drag_accept(e):
+        # get draggable (source) control by its ID
+        src = page.get_control(e.src_id)
+        # update text inside draggable control
+        src.content.content.value = "0"
+        # update text inside drag target control
+        e.control.content.content.value = "1"
+        page.update()
+
+    page.add(
+        ft.Row(
+            [
+                ft.Draggable(
+                    group="number",
+                    content=ft.Container(
+                        width=50,
+                        height=50,
+                        bgcolor=ft.colors.CYAN_200,
+                        border_radius=5,
+                        content=ft.Text("1", size=20),
+                        alignment=ft.alignment.center,
+                    ),
+                ),
+                ft.Container(width=100),
+                ft.DragTarget(
+                    group="number",
+                    content=ft.Container(
+                        width=50,
+                        height=50,
+                        bgcolor=ft.colors.PINK_200,
+                        border_radius=5,
+                        content=ft.Text("0", size=20),
+                        alignment=ft.alignment.center,
+                    ),
+                    on_accept=drag_accept,
+                ),
+            ]
         )
-    page.update()
+    )
 
 
 ft.app(target=main)
