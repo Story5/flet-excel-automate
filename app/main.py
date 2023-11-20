@@ -16,7 +16,8 @@ def main(page: ft.Page):
     ))
     page.add(
         ft.Row(controls=[
-            ft.TextField(label="Your name")
+            ft.TextField(label="Your name"),
+            ft.ElevatedButton(text="Say my name!")
         ])
     )
     for i in range(10):
