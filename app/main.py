@@ -20,10 +20,15 @@ def main(page: ft.Page):
             ft.ElevatedButton(text="Say my name!")
         ])
     )
+    def button_clicked(e):
+        page.add(ft.Text('Clicked!'))
+    page.add(ft.ElevatedButton(text='Click me',on_click=button_clicked))
     for i in range(10):
-        t.value = f"Step {i}"
+        page.controls.append(ft.Text(f"Line {i}"))
+        if i > 4:
+            page.controls.pop(0)
         page.update()
-        time.sleep(1)
+        time.sleep(0.3)
 
 
 ft.app(target=main)
