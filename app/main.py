@@ -2,30 +2,27 @@ import flet as ft
 
 
 def main(page: ft.Page):
-    # strings
-    page.client_storage.set("key", "value")
+    page.title = "Flet Chat"
 
-    # numbers, booleans
-    page.client_storage.set("number.setting", 12345)
-    page.client_storage.set("bool_setting", True)
+    # subscribe to broadcast messages
+    def on_message(msg):
+        messages.controls.append(ft.Text(msg))
+        page.update()
 
-    # lists
-    page.client_storage.set("favorite_colors", ["read", "green", "blue"])
+    page.pubsub.subscribe(on_message)
 
-    # The value is automatically converted back to the original type
-    value = page.client_storage.get("key")
+    def send_click(e):
+        page.pubsub.send_all(f"{user.value}: {message.value}")
+        # clean up the form
+        message.value = ""
+        page.update()
 
-    colors = page.client_storage.get("favorite_colors")
-    # colors = ["read", "green", "blue"]
-
-    # Check if a key exists:
-    page.client_storage.contains_key("key")  # True if the key exists
-    # Get all keys:
-    page.client_storage.get_keys("key-prefix.")
-    # Remove a value:
-    page.client_storage.remove("key")
-    # Clear the storage:
-    page.client_storage.clear()
+    messages = ft.Column()
+    user = ft.TextField(hint_text="Your name", width=150)
+    message = ft.TextField(hint_text="Your message...",
+                           expand=True)  # fill all the space
+    send = ft.ElevatedButton("Send", on_click=send_click)
+    page.add(messages, ft.Row(controls=[user, message, send]))
 
 
-ft.app(target=main)
+ft.app(target=main, view=ft.AppView.WEB_BROWSER)
