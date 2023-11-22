@@ -1,13 +1,13 @@
 import flet as ft
 import openpyxl
+from components.sx_file_picker import SXFilePicker
 
 
 class SXApp(ft.UserControl):
     def __init__(self, page: ft.Page):
         super().__init__()
         self.page = page
-        self.title = '请选择库存码单excel'
-        self.filePicker = ft.FilePicker(on_result=self.pick_files_result)
+        self.stock_excel_path = ''
         self.tonInput = ft.TextField(
             label='请输入需要配货的吨数',
             keyboard_type=ft.KeyboardType.NUMBER
@@ -23,17 +23,15 @@ class SXApp(ft.UserControl):
             label='换60%的货',
             value=False,
         )
-        self.page.overlay.append(self.filePicker)
         self.excel_path = None
         self.wb = None
 
     def build(self):
-        self.choose_excel_button = ft.ElevatedButton(
-            visible=True,
-            text=self.title,
-            icon=ft.icons.UPLOAD_FILE,
-            on_click=self.on_click_choose_excel,
+        self.stock_excel_picker = SXFilePicker(
+            page=self.page,
+            buttonText='请选择库存excel',
         )
+
         self.user_input = ft.Column([
             ft.Row([
                 ft.Text('配货吨数'),
@@ -53,18 +51,10 @@ class SXApp(ft.UserControl):
             ]
         )
 
-        self.view = ft.Column([
-            self.choose_excel_button,
+        return ft.Column([
+            self.stock_excel_picker,
             self.excel_view,
         ])
-        return self.view
-
-    def on_click_choose_excel(self, e):
-        self.filePicker.pick_files(
-            allowed_extensions=['xlsx'],
-            allow_multiple=False,
-            dialog_title=self.title
-        )
 
     def pick_files_result(self, e: ft.FilePickerResultEvent):
         if len(e.files) > 0:
@@ -73,10 +63,9 @@ class SXApp(ft.UserControl):
             self.load_excel(file_picker_file.path)
 
     def load_excel(self, path):
-        self.excel_path = path
+        self.stock_excel_path = path
         self.wb = openpyxl.load_workbook(path, data_only=True)
 
-        self.choose_excel_button.visible = False
         self.excel_view.visible = True
         self.view.update()
 
