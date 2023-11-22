@@ -1,5 +1,4 @@
 import flet as ft
-import openpyxl
 from components.sx_file_picker import SXFilePicker
 
 
@@ -9,7 +8,6 @@ class SXApp(ft.UserControl):
         self.page = page
 
         self.stock_excel_path = ''  # 库存表excel文件路径
-        self.wb = None
 
     def build(self):
         self.tonInput = ft.TextField(
@@ -26,17 +24,6 @@ class SXApp(ft.UserControl):
         self.sixCheckbox = ft.Checkbox(
             label='换60%的货',
             value=False,
-        )
-
-        self.excel_view = ft.Column(
-            visible=False,
-            controls=[
-                SXFilePicker(
-                    page=self.page,
-                    buttonText='请选择入库excel',
-                    on_result_path=lambda path: self.on_excel_path(path, 1)
-                ),
-            ]
         )
         return ft.Column([
             SXFilePicker(
@@ -56,7 +43,19 @@ class SXApp(ft.UserControl):
                     self.sixCheckbox,
                 ])
             ]),
-            self.excel_view,
+            ft.Divider(),
+            SXFilePicker(
+                page=self.page,
+                buttonText='请选择入库excel',
+                on_result_path=lambda path: self.on_excel_path(path, 1)
+            ),
+            ft.Divider(),
+            ft.ElevatedButton(
+                text='开始自动化配货',
+                color=ft.colors.WHITE,
+                bgcolor=ft.colors.GREEN,
+                on_click=self.on_click_start_automate
+            )
         ])
 
     def on_excel_path(self, path: str, type):
@@ -64,10 +63,8 @@ class SXApp(ft.UserControl):
         if type == 0:  # 库存表
             print('库存表:', type)
             self.stock_excel_path = path
-            self.load_excel(self.stock_excel_path)
         elif type == 1:  # 入库表
             print('入库表:', type)
 
-    def load_excel(self, path):
-        print(path)
-    
+    def on_click_start_automate(self, e):
+        print('on_click_start_automate')
