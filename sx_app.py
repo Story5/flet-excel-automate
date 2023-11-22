@@ -26,10 +26,18 @@ class SXApp(ft.UserControl):
         self.excel_path = None
         self.wb = None
 
+    def on_excel_path(self, path: str, type):
+        print('on_excel_path:', path)
+        if type == 0:  # 库存表
+            print('库存表:',type)
+        elif type == 1:  # 入库表
+            print('入库表:',type)
+
     def build(self):
         self.stock_excel_picker = SXFilePicker(
             page=self.page,
             buttonText='请选择库存excel',
+            on_result_path=lambda path: self.on_excel_path(path, 0)
         )
 
         self.user_input = ft.Column([
