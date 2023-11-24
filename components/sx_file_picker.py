@@ -8,11 +8,13 @@ class SXFilePicker(ft.UserControl):
             page: ft.Page,
             buttonText: str,
             on_result_path=None,
+            on_sheet_change=None,
     ):
         super().__init__()
         self.page = page
         self.buttonText = buttonText
         self.on_result_path = on_result_path
+        self.on_sheet_change = on_sheet_change
 
         self.filePicker = ft.FilePicker(on_result=self.pick_files_result)
         self.page.overlay.append(self.filePicker)
@@ -66,4 +68,4 @@ class SXFilePicker(ft.UserControl):
     def on_tabs_change(self, e):
         sheet_str = self.sheets_tab.tabs[self.sheets_tab.selected_index].text
         sheetObj = self.wb[sheet_str]
-        print('on_tabs_change:', sheetObj.title)
+        self.on_sheet_change(sheetObj)

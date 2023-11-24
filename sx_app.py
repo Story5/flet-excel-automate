@@ -1,5 +1,7 @@
 import flet as ft
+import openpyxl
 from components.sx_file_picker import SXFilePicker
+from utils.sheet_utils import *
 
 
 class SXApp(ft.UserControl):
@@ -29,7 +31,8 @@ class SXApp(ft.UserControl):
             SXFilePicker(
                 page=self.page,
                 buttonText='请选择库存excel',
-                on_result_path=lambda path: self.on_excel_path(path, 0)
+                on_result_path=lambda path: self.on_excel_path(path, 0),
+                on_sheet_change=lambda sheet: self.on_excel_sheet_change(sheet)
             ),
             ft.Divider(),
             ft.Column([
@@ -66,5 +69,12 @@ class SXApp(ft.UserControl):
         elif type == 1:  # 入库表
             print('入库表:', type)
 
+    def on_excel_sheet_change(self, sheet: openpyxl.worksheet.worksheet.Worksheet):
+        print('on_excel_sheet_change type:', type(sheet))
+        print('on_excel_sheet_change title:', sheet.title)
+        self.sheet = sheet
+
     def on_click_start_automate(self, e):
         print('on_click_start_automate')
+        ton = self.tonInput.value
+        good_out(sheet=self.sheet, ton=ton)
